@@ -1,4 +1,4 @@
-import { model, Schema,SchemaOptions } from "mongoose";
+import { model, Schema, SchemaOptions } from "mongoose";
 import generatePassword from "../utils/generate.Secure.Password";
 
 interface IUser {
@@ -9,30 +9,37 @@ interface IUser {
   role?: string;
 }
 
-const UserSchema = new Schema({
-  username: {
-    type: String,
-    required: [true, "Please Provide Username"],
-    trim: true,
+const UserSchema = new Schema(
+  {
+    username: {
+      type: String,
+      required: [true, "Please Provide Username"],
+      trim: true,
+    },
+    email: {
+      type: String,
+      required: [true, "Please Provide Email"],
+      unique: true,
+    },
+    password: {
+      type: String,
+      required: [true, "Please Provide Password"],
+    },
+    role: {
+      type: String,
+      default: "User",
+    },
+    verified: {
+      type: Boolean,
+      default: false,
+    },
+    twoFactorEnabled: {
+      type: Boolean,
+      default: false,
+    },
   },
-  email: {
-    type: String,
-    required: [true, "Please Provide Email"],
-    unique: true,
-  },
-  password: {
-    type: String,
-    required: [true, "Please Provide Password"],
-  },
-  role: {
-    type: String,
-    default: "User",
-  },
-  verified: {
-    type: Boolean,
-    default: false,
-  },
-});
+  { timestamps: true }
+);
 
 UserSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();

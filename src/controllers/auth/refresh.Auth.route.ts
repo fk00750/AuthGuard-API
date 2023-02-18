@@ -1,15 +1,40 @@
 import Joi from "joi";
 import RouteParamsHandler from "../../types/RouteParams.type";
-import RefreshToken from "../../models/refresh_token.model";
-import { decode, Jwt, JwtPayload } from "jsonwebtoken";
-import IssueAccessAndRefreshToken from "../../utils/issue.JWT.tokens";
+import { RefreshTokenCycle } from "../../utils/Refresh.Token.Cycle";
+
+enum ROLE {
+  ADMIN = "Admin",
+  CUSTOMER = "User",
+}
+
+/**
+ * @async
+ * @function RefreshTokenHandler - RefreshTokenHandler handles the refresh token process by validating the incoming refresh token, making the old refresh token invalid and generating new access token and refresh token
+ *
+ *
+ * @throws {Error} - If the incoming refresh token is not provided or invalid
+ * @throws {Error} - If the refresh token does not exists in the database or is not valid
+ * @throws {Error} - If the refresh token has been expired
+ *
+ * @returns {Object} - Returns an object with two keys "access_token" and "refresh_token"
+ *
+ * Steps
+ * @step 1 - Extract the refresh token from the header of the request object
+ * @step 2 - Validate the incoming refresh token
+ * @step 3 - Check if the refresh token exists in the database and is valid
+ * @step 4 - Check if the refresh token has been expired
+ * @step 5 - Make the old refresh token invalid
+ * @step 6 - Generate new access token and refresh token
+ * @step 7 - Save the newly generated refresh token in the database
+ * @step 8 - Return the newly generated access token and refresh token in the response object
+ */
 
 const RefreshTokenHandler: RouteParamsHandler = async (req, res, next) => {
   try {
     // extract token from header
-    const token = req.headers.authorization
-      ?.split(" ")[1]
-      ?.toString() as string;
+    const { refreshToken } = req.body;
+
+    const token = refreshToken;
 
     // validate token
     const refreshTokenValidationSchema = Joi.string().required();
@@ -20,55 +45,17 @@ const RefreshTokenHandler: RouteParamsHandler = async (req, res, next) => {
       return next(error);
     }
 
+    // user
+    const user = (<any>req).user;
+
     //! Implementing refresh token cycle
-    // finding refresh token in database
     try {
-      const Oldrefreshtoken = await RefreshToken.findOne({
-        refreshToken: token,
-      });
-
-      // if refresh token does not exists OR is not valid
-      if (!Oldrefreshtoken || Oldrefreshtoken.status !== "valid") {
-        throw new Error("Invalid refresh token");
-      }
-
-      // if refreshToken has been expired
-      // Math.floor(Date.now() / 1000) taki date convert kar ske
-      if (Oldrefreshtoken.expiresAt < Math.floor(Date.now() / 1000)) {
-        throw new Error("Refresh token has been expired");
-      }
-
-      const { _id } = (<any>req).user;
-
-      // making old refresh token as invalid
-      Oldrefreshtoken.status = "invalid";
-      await Oldrefreshtoken.save();
-
-      const access_token = await IssueAccessAndRefreshToken.issueAccessToken(
-        _id
-      );
-      const refresh_token = await IssueAccessAndRefreshToken.issueRefreshToken(
-        _id
+      const { accessToken, refreshToken } = await RefreshTokenCycle.refresh(
+        token,
+        user
       );
 
-      const decoded = decode(refresh_token as string, { complete: true });
-
-      if (!decoded) {
-        throw new Error("Invalid refresh token");
-      }
-
-      const { payload } = decoded as { payload: JwtPayload };
-
-      const expiresAt = payload.exp;
-
-      await RefreshToken.create({
-        refreshToken: refresh_token,
-        expiresAt: expiresAt,
-        status: "valid",
-        userId: _id,
-      });
-
-      res.status(201).json({ access_token, refresh_token });
+      res.status(201).json({ accessToken, refreshToken });
     } catch (error) {
       throw error;
     }

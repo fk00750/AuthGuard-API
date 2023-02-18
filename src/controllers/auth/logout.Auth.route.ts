@@ -1,5 +1,6 @@
 import RefreshToken from "../../models/refresh_token.model";
 import RouteParamsHandler from "../../types/RouteParams.type";
+import CustomErrorHandler from "../../utils/CustomError.Handler";
 
 /**
  * @function logoutUser - Function to handle logout process.
@@ -16,16 +17,21 @@ import RouteParamsHandler from "../../types/RouteParams.type";
  * * Return a JSON response indicating success of the logout process.
  */
 
+// https://authguard-api.onrender.com
+
 const logoutUser: RouteParamsHandler = async (req, res, next) => {
   try {
-    const refreshToken = req.headers.authorization?.split(" ")[1];
+    const { refreshToken } = req.body;
 
-    // find the refresh token and delete
-    const deleteToken = await RefreshToken.findOneAndDelete({ refreshToken });
+    // delete token
+    const deleteToken = await RefreshToken.findOneAndDelete({
+      refreshToken,
+    });
 
-    if (!deleteToken) throw Error;
+    if (!deleteToken)
+      return next(CustomErrorHandler.unAuthorized("Unable to logout"));
 
-    res.status(200).send("User logout");
+    res.status(200).json({ message: "User logout" });
   } catch (error) {
     return next(error);
   }

@@ -1,6 +1,7 @@
 import Resetkey from "../../models/reset.key.Model";
 import User from "../../models/user.Model";
 import RouteParamsHandler from "../../types/RouteParams.type";
+import CustomErrorHandler from "../../utils/CustomError.Handler";
 import generatePassword from "../../utils/generate.Secure.Password";
 
 /**
@@ -14,7 +15,7 @@ import generatePassword from "../../utils/generate.Secure.Password";
  * @throws Will throw an error if the user associated with the reset password key is not found or not verified.
  * @returns {Response} Returns a JSON response indicating success or failure of the reset password process.
  * @route {POST} /auth/reset-password
- * 
+ *
  * Steps
  * @step 1 - Extract the password and key from the request body.
  * @step 2 - Search for the reset password key in the database.
@@ -41,7 +42,8 @@ const resetPassword: RouteParamsHandler = async (req, res, next) => {
     if (!resetKey.verified) return next(new Error("Invalid Key"));
 
     // check if key is expired
-    // if(Date.now() > resetKey.expiresAt) return next()
+    // if (Date.now() > resetKey.expiresAt.getTime())
+    //   return next(CustomErrorHandler.unAuthorized("Reset key is expired"));
 
     /* --- reset password process --- */
 

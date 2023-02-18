@@ -10,6 +10,30 @@ const ACCESS_PRIV_KEY = readFileSync(pathToKey, "utf8");
 const pathToRefreshKey = join(__dirname, "../..", "refresh_private.pem");
 const REFRESH_PRIV_KEY = readFileSync(pathToRefreshKey, "utf-8");
 
+/* --- Admin --- */
+
+// Admin access token key
+const pathToAdminAccessKey: string = join(
+  __dirname,
+  "../..",
+  "AdminAccess_privateKey.pem"
+);
+const ADMIN_ACCESS_PRIVATE_KEY: string = readFileSync(
+  pathToAdminAccessKey,
+  "utf-8"
+);
+
+// Admin refresh token key
+const pathToAdminRefreshKey: string = join(
+  __dirname,
+  "../..",
+  "AdminRefresh_privateKey.pem"
+);
+const ADMIN_REFRESH_PRIVATE_KEY: string = readFileSync(
+  pathToAdminRefreshKey,
+  "utf-8"
+);
+
 /**
  * @class IssueAccessAndRefreshToken
  * @classdesc Class for issuing access and refresh tokens
@@ -26,6 +50,10 @@ class IssueAccessAndRefreshToken {
    *@property {string} REFRESH_PRIV_KEY - REFRESH_PRIV_KEY property - private key for refresh token
    */
   static REFRESH_PRIV_KEY = REFRESH_PRIV_KEY;
+
+  // Admin
+  static ADMIN_ACCESS_PRIV_KEY = ADMIN_ACCESS_PRIVATE_KEY;
+  static ADMIN_REFRESH_PRIV_KEY = ADMIN_REFRESH_PRIVATE_KEY;
 
   /**
    *@static
@@ -50,6 +78,7 @@ class IssueAccessAndRefreshToken {
 
   /**
    *@static
+   *@async
    *@method issueAccessToken - issueAccessToken method - method to generate access token
    *@param {Types.ObjectId} userId - user id for payload
    *@returns {string} - signed access token
@@ -60,12 +89,22 @@ class IssueAccessAndRefreshToken {
 
   /**
    *@static
+   *@async
    *@method issueRefreshToken - issueRefreshToken method - method to generate refresh token
    *@param {Types.ObjectId} userId - user id for payload
    *@returns {string} - signed refresh token
    */
   static async issueRefreshToken(userId: Types.ObjectId) {
     return this.issueToken(userId, this.REFRESH_PRIV_KEY, "1y");
+  }
+
+  // Admin
+  static async issueAdminAccessToken(userId: Types.ObjectId) {
+    return this.issueToken(userId, this.ADMIN_ACCESS_PRIV_KEY, "50s");
+  }
+
+  static async issueAdminRefreshToken(userId: Types.ObjectId) {
+    return this.issueToken(userId, this.ADMIN_REFRESH_PRIV_KEY, "1y");
   }
 }
 

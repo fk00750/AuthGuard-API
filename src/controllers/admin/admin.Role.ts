@@ -1,24 +1,34 @@
 import User from "../../models/user.Model";
 import RouteParamsHandler from "../../types/RouteParams.type";
+import UserQuery from "../../utils/Admin.Users.Query";
+import CustomErrorHandler from "../../utils/CustomError.Handler";
 
 enum ROLE {
-  ADMIN = "admin",
+  ADMIN = "Admin",
   CUSTOMER = "customer",
 }
 
 const getAllUsers: RouteParamsHandler = async (req, res, next) => {
   try {
     // check for admin
-
     const user = <any>req.user;
 
     if (user.role !== ROLE.ADMIN)
-      return next(new Error("You are not authorized"));
+      return next(CustomErrorHandler.unAuthorized("You are not authorized"));
 
-    // find all users
-    const users = await User.find();
+    const userQuery = new UserQuery(req.query);
+    const users = await User.find(userQuery.getQuery())
+      .sort(userQuery.getSort())
+      .limit(userQuery.getLimit());
 
-    res.status(200).json({ users });
+    if (!users) return next(CustomErrorHandler.notFound("Users not found"));
+
+    const Users = users.map((user) => {
+      const { _id, username, email, role, twoFactorEnabled, verified } = user;
+      return { _id, username, email, role, twoFactorEnabled, verified };
+    });
+
+    res.status(200).json({ Users });
   } catch (error) {
     return next(error);
   }
@@ -32,9 +42,13 @@ const getUser: RouteParamsHandler = async (req, res, next) => {
     // find user
     const user = await User.findOne({ _id: id });
 
-    if (!user) return next(new Error("User does not exists"));
+    if (!user) return next(CustomErrorHandler.notFound("User not found"));
 
-    res.status(200).json({ user });
+    const { _id, username, email, role, twoFactorEnabled, verified } = user;
+
+    res
+      .status(200)
+      .json({ _id, username, email, role, twoFactorEnabled, verified });
   } catch (error) {
     return next(error);
   }
@@ -48,7 +62,7 @@ const deleteUser: RouteParamsHandler = async (req, res, next) => {
 
     if (!user) return next(new Error("User does not exists"));
 
-    res.status(204).json({ message: "User deleted Successfully" });
+    res.status(200).json({ message: "User deleted Successfully" });
   } catch (error) {
     return next(error);
   }

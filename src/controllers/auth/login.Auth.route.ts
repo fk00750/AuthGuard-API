@@ -1,11 +1,13 @@
 import RouteParamsHandler from "../../types/RouteParams.type";
-import Joi from "joi";
-import CustomErrorHandler from "../../utils/CustomError.Handler";
-import User from "../../models/user.Model";
-import CheckPasswordValidity from "../../utils/check.Password.validity";
 import IssueAccessAndRefreshToken from "../../utils/issue.JWT.tokens";
 import { decode, JwtPayload } from "jsonwebtoken";
 import RefreshToken from "../../models/refresh_token.model";
+import CustomErrorHandler from "../../utils/CustomError.Handler";
+
+enum ROLE {
+  ADMIN = "Admin",
+  CUSTOMER = "User",
+}
 
 /**
  *@async
@@ -44,86 +46,69 @@ import RefreshToken from "../../models/refresh_token.model";
  */
 
 const loginUser: RouteParamsHandler = async (req, res, next) => {
-  // Validate login credentials
   try {
-    const loginValidateSchema = Joi.object({
-      email: Joi.string().email(),
-      password: Joi.string(),
-    });
+    // check password entered by user
+    const user = (<any>req).user;
 
-    const { error } = loginValidateSchema.validate(req.body);
+    if (!user) return next(CustomErrorHandler.serverError());
 
-    if (error) return next(CustomErrorHandler.serverError(error.message));
-
-    // find user in database
     try {
-      // find the user
-      const user = await User.findOne({ email: req.body.email });
-
-      if (!user) return next(new Error("User not found"));
-
-      // is user verified
-      if (!user.verified)
-        return next(CustomErrorHandler.unAuthorized("User is not verified"));
-
-      // check password entered by user
-      const IsPasswordValid = await CheckPasswordValidity(
-        user.id,
-        req.body.password,
-        user.password
-      );
-
       // Issue Access and Refresh Token
-      if (IsPasswordValid) {
-        // find the refresh token with the specific user id
-        const ExistingRefreshToken = await RefreshToken.findOne({
-          userId: user.id,
-        });
+      // find the refresh token with the specific user id
+      const ExistingRefreshToken = await RefreshToken.findOne({
+        userId: user.id,
+      });
 
-        // if the refresh token exists then make that refresh token invalid
-        // in order to issue new refresh token
-        if (ExistingRefreshToken?.status === "valid") {
-          ExistingRefreshToken.status = "invalid";
-          await ExistingRefreshToken.save();
-        }
+      if (ExistingRefreshToken) {
+        //  Delete all previous refresh token of the user
+        await RefreshToken.deleteMany({ userId: ExistingRefreshToken.userId });
+      }
 
-        // access and refresh token
-        const accessToken = await IssueAccessAndRefreshToken.issueAccessToken(
+      // access and refresh token
+      let accessToken, refreshToken;
+
+      if (user.role === ROLE.ADMIN) {
+        accessToken = await IssueAccessAndRefreshToken.issueAdminAccessToken(
           user._id
         );
-        const refreshToken = await IssueAccessAndRefreshToken.issueRefreshToken(
+        refreshToken = await IssueAccessAndRefreshToken.issueAdminRefreshToken(
           user._id
         );
-
-        // ! Implementing Refresh token cycle
-        // decoding refresh token to check validity
-        const decoded = decode(refreshToken as string, { complete: true });
-
-        if (!decoded) {
-          throw new Error("Invalid refresh token");
-        }
-
-        const { payload } = decoded as { payload: JwtPayload };
-
-        const expiresAt = payload.exp;
-
-        const storedRefreshToken = await new RefreshToken({
-          refreshToken: refreshToken,
-          expiresAt: expiresAt,
-          status: "valid",
-          userId: user._id,
-        }).save();
-
-        // check if the promise is resolved
-        if (storedRefreshToken) {
-          res.status(200).json({
-            message: "User Login Successfully",
-            access_token: accessToken,
-            refresh_token: refreshToken,
-          });
-        }
       } else {
-        throw new Error("Password is wrong");
+        accessToken = await IssueAccessAndRefreshToken.issueAccessToken(
+          user._id
+        );
+        refreshToken = await IssueAccessAndRefreshToken.issueRefreshToken(
+          user._id
+        );
+      }
+
+      // ! Implementing Refresh token cycle
+      // decoding refresh token to check validity
+      const decoded = decode(refreshToken as string, { complete: true });
+
+      if (!decoded) {
+        throw new Error("Invalid refresh token");
+      }
+
+      const { payload } = decoded as { payload: JwtPayload };
+
+      const expiresAt = payload.exp;
+
+      const storedRefreshToken = await new RefreshToken({
+        refreshToken: refreshToken,
+        expiresAt: expiresAt,
+        status: "valid",
+        userId: user._id,
+      }).save();
+
+      // check if the promise is resolved
+      if (storedRefreshToken) {
+        res.status(200).json({
+          message: "User Login Successfully",
+          access_token: accessToken,
+          refresh_token: refreshToken,
+        });
       }
     } catch (error) {
       if (error instanceof Error) {

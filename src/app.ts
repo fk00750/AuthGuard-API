@@ -1,13 +1,13 @@
 /**
  * @file app.js
- * Contains the implementation of the app logic
- * It sets up the various middlewares, routes and configurations needed for the express application.
+ * @fileoverview - The app.js file in an Express application is responsible for setting up various middlewares, routes, and configurations needed to run the application. 
+ * It imports necessary modules, initializes passport configuration, manages user sessions, logs HTTP requests, implements security measures, parses JSON and urlencoded bodies, 
+ * defines routes for authentication and user management, provides a home route, and handles errors. The file acts as the central point of control for 
+ * the Express application and provides a convenient way to manage all the necessary components of the application in one place.
  * @author Faiz Ali Khan
  */
 
-/**
- * Importing necessary modules.
- */
+// Importing necessary modules.
 import express, { Application, Request, Response, NextFunction } from "express";
 import errorHandler from "./middleware/error.Handler";
 import AuthRouter from "./routes/auth/auth.Routes";
@@ -95,6 +95,9 @@ app.use(express.urlencoded({ extended: false }));
 
 // Auth Routes
 app.use("/auth", authLimiter, AuthRouter);
+
+// Admin
+app.use("/admin", authLimiter, UserManagementRouterByAdmin);
 
 // user management route by admin
 app.use("/admin", authLimiter, UserManagementRouterByAdmin);

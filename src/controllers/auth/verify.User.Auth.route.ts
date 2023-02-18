@@ -33,36 +33,33 @@ const verifyUserEmail: RouteParamsHandler = async (req, res, next) => {
   try {
     const { id, token } = req.params;
 
-    try {
-      const user = await User.findOne({ _id: id });
-      const emailSecret = await emailVerificationSecretModel.findOne({
-        userId: user?._id,
-      });
+    const user = await User.findOne({ _id: id });
 
-      if (user?.verified)
-        return next(
-          CustomErrorHandler.unAuthorized("Email is already verified")
-        );
+    if (!user) return next(CustomErrorHandler.notFound("User not found"));
 
-      if (user && emailSecret) {
-        const secret = emailSecret.secret;
-        const verifyEmail = verify(token, String(secret));
+    const emailSecret = await emailVerificationSecretModel.findOne({
+      userId: user?._id,
+    });
 
-        if (!verifyEmail) throw new Error("User Email Verification Failed");
+    if (!emailSecret) return next(new Error("Unable to process the request"));
 
-        user.verified = true;
-        await user.save();
+    if (user?.verified)
+      return next(CustomErrorHandler.unAuthorized("Email is already verified"));
 
-        await emailVerificationSecretModel.deleteMany({ userId: id, secret });
-      }
-    } catch (error) {
-      throw error;
+    if (user && emailSecret) {
+      const secret = emailSecret.secret;
+      const verifyEmail = verify(token, String(secret));
+
+      if (!verifyEmail) throw new Error("User Email Verification Failed");
+
+      user.verified = true;
+      await user.save();
+
+      await emailVerificationSecretModel.deleteMany({ userId: id, secret });
+
+      // res.redirect(`${site}/log-in`);
+      res.status(200).json({ message: "Email verification is successful" });
     }
-
-    // res.redirect(`${site}/log-in`);
-    res
-      .status(200)
-      .json({ message: "Your Email verification is successful" });
   } catch (error) {
     return next(new Error("User Verification Failed"));
   }

@@ -2,13 +2,9 @@ import User from "../models/user.Model";
 import fs from "fs";
 import path from "path";
 import passport, { PassportStatic } from "passport";
-import { Strategy, ExtractJwt, StrategyOptions } from "passport-jwt";
-import { Model, model } from "mongoose";
+import { Strategy, ExtractJwt } from "passport-jwt";
+import { Model } from "mongoose";
 
-/**
- * JwtPayload is the interface for JSON Web Token payload
- * @interface
- */
 interface JwtPayload {
   sub: string;
   iat: number;
@@ -17,7 +13,12 @@ interface JwtPayload {
 
 /**
  * IUser is the interface for User model
- * @interface
+ * @interface User
+ * @property {string} Id - Id of User
+ * @property {string} username - username of User
+ * @property {string} email - email of User
+ * @property {string} password - password of User
+ * @property {string} role - role of User either admin or user
  */
 interface IUser {
   Id?: string;
@@ -39,6 +40,28 @@ const RpathToRefKey: string = path.join(
 );
 const Refresh_PUB_KEY: string = fs.readFileSync(RpathToRefKey, "utf-8");
 
+// Admin Access Public Key
+const pathToAdminAccessKey: string = path.join(
+  __dirname,
+  "../..",
+  "AdminAccess_publicKey.pem"
+);
+const ADMIN_ACCESS_PUBLIC_KEY: string = fs.readFileSync(
+  pathToAdminAccessKey,
+  "utf-8"
+);
+
+// Admin Refresh Private Key
+const pathToAdminRefreshKey: string = path.join(
+  __dirname,
+  "../..",
+  "AdminRefresh_publicKey.pem"
+);
+const ADMIN_REFRESH_PUBLIC_KEY: string = fs.readFileSync(
+  pathToAdminRefreshKey,
+  "utf-8"
+);
+
 /**
  * @function passportStrategy - passportStrategy is a function for registering JWT authentication strategy using passport
  * @param {passport.PassportStatic} passport - The passport module
@@ -50,29 +73,20 @@ const passportStrategy = (
   usageName: string,
   PUB_KEY: string
 ) => {
-  /**
-   * Register the JWT authentication strategy with the given name
-   */
+  // Register the JWT authentication strategy with the given name
   passport.use(
     usageName,
     new Strategy(
       {
-        /**
-         * The function to extract the JWT token from the request header
-         */
+        // The function to extract the JWT token from the request header
         jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-        /**
-         * The secret or public key to use for verifying the JWT token
-         */
+        // The secret or public key to use for verifying the JWT token
         secretOrKey: PUB_KEY,
-        /**
-         * The algorithms to use for verifying the JWT token
-         */
+        // The algorithms to use for verifying the JWT token
         algorithms: ["RS256"],
       },
       /**
-       * The callback function for the JWT authentication strategy
-       * @callback JwtCallback
+       * @callback JwtCallback - The callback function for the JWT authentication strategy
        * @param {JwtPayload} jwt_payload - The payload of the JWT token
        * @param {Function} done - The callback function to pass the authenticated user or error
        */
@@ -121,6 +135,19 @@ const passportConfig = (passport: PassportStatic) => {
 
   try {
     passportStrategy(passport, "jwt-refresh", Refresh_PUB_KEY);
+  } catch (error) {
+    console.error(error);
+  }
+
+  // Admin
+  try {
+    passportStrategy(passport, "jwt-access-admin", ADMIN_ACCESS_PUBLIC_KEY);
+  } catch (error) {
+    console.error(error);
+  }
+
+  try {
+    passportStrategy(passport, "jwt-refresh-admin", ADMIN_REFRESH_PUBLIC_KEY);
   } catch (error) {
     console.error(error);
   }

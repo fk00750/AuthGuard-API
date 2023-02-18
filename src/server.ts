@@ -1,7 +1,11 @@
 /**
  * @file server.js
- * Contains the implementation of the server logic
- * It sets up the various middlewares, routes and configurations needed for the server.
+ * @fileoverview - The server.js file is the main implementation of the server logic for an application. 
+ * It sets up the environment variables from the .env file, imports the main application module from ./app, and 
+ * the custom error handler from ./utils/CustomError.Handler. 
+ * It also connects to the database using the Connect__Database function. 
+ * The server listens to the specified port, which is either defined in the environment variables 
+ * or set to 5000 as a default. If there is an error starting the server, the custom error handler will catch the exception and log the error message.
  * @author Faiz Ali Khan
  */
 

@@ -10,35 +10,31 @@ import {
 /**
  * @async
  * @function registerUser - Function to handle user registration process.
- *
  * @param {Request} req - Express request object
  * @param {Response} res - Express response object
  * @param {Function} next - Express next middleware function
- *
  * @throws Will throw an error if validation of the user credentials fails.
  * @throws Will throw an error if email already exists in the database.
- *
  * @returns {Response} Returns a JSON response indicating success or failure of the registration.
- *
  * @route {POST} /auth/register
- *  
+ *
  * Steps
- * @step1 Validate User Credentials
+ * @step1 - Validate User Credentials
  * The user's credentials are first validated using Joi. The required fields are username, email, password, and repeatPassword.
  *
- * @step2 Check for Existing User
+ * @step2 - Check for Existing User
  * Next, the function checks if the email provided by the user exists in the database.
  *
- * @step3 Save User Credentials
+ * @step3 - Save User Credentials
  * If the email provided by the user is not in the database, the user's credentials are saved in the database.
  *
- * @step4 Generate Verification Token
+ * @step4 - Generate Verification Token
  * After saving the user's credentials in the database, a verification token is generated using the user's email and user ID.
  *
- * @step5 Send Verification Email
+ * @step5 - Send Verification Email
  * The verification token is sent to the user's email along with a verification link. The link consists of the user's ID and the verification token.
  *
- * @step6 Return Response
+ * @step6 - Return Response
  * If all steps are successful, the function returns a 201 status code along with a message saying "User Registered Successfully. Please Verify Your email.
  */
 
