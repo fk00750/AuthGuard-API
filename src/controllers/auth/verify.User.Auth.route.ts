@@ -8,6 +8,8 @@ import CustomErrorHandler from "../../utils/CustomError.Handler";
 
 const site = process.env.SITE;
 
+// http://authguard-api.onrender.com/auth/verify-email/63f22ff1c4e32f0bcab3292b/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2M2YyMmZmMWM0ZTMyZjBiY2FiMzI5MmIiLCJlbWFpbCI6ImxpbmFjOTQwNDRAbXVzdGJlaXQuY29tIiwiaWF0IjoxNjc2ODE2MzcwLCJleHAiOjE2NzY4MTcyNzB9.H-WbRrDVMsrXupH3u3x4tzPSV7u_9LDabm1xtatsst4
+
 /**
  * @function verifyUserEmail - Function to handle user email verification.
  * @param {Request} req - Express request object

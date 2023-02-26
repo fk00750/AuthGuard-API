@@ -3,6 +3,7 @@ import RouteParamsHandler from "../../types/RouteParams.type";
 import CustomErrorHandler from "../../utils/CustomError.Handler";
 
 /**
+ * @async
  * @function logoutUser - Function to handle logout process.
  * @param {Request} req - Express request object
  * @param {Response} res - Express response object

@@ -50,6 +50,11 @@ class CustomErrorHandler extends Error {
     return new CustomErrorHandler(401, message);
   }
 
+  // not verified user
+  static nonVerified(message: string = "non-verified"): Error {
+    return new CustomErrorHandler(403, message);
+  }
+
   /**
    * @param {string} message - Not found
    * @returns {Error} - returns error if any problem occurs in server or network

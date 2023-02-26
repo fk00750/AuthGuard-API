@@ -118,13 +118,13 @@ const passportStrategy = (
 
 /**
  * @function passportConfig - passportConfig is a configuration function for the Passport library.
- * @description - It registers two JWT authentication strategies using the given Passport instance.The two strategies are named "jwt-access" and "jwt-refresh" and use the ACCESS_PUB_KEY and Refresh_PUB_KEY respectively.It also sets up the serialization and deserialization of users.
+ * @description - It registers four JWT authentication strategies using the given Passport instance.The four strategies are named "jwt-access","jwt-access-admin" and "jwt-refresh","jwt-refresh-admin" and use the ACCESS and REFRESH Public key respectively.It also sets up the serialization and deserialization of users.
  * @param {PassportStatic} passport - The Passport library instance.
  */
 const passportConfig = (passport: PassportStatic) => {
   /**
    *This block of code tries to register the JWT authentication strategy for access tokens and refresh tokens using the passportStrategy function.
-   *It passes the passport instance, the usageName string (either "jwt-access" or "jwt-refresh"), and the corresponding public key (either ACCESS_PUB_KEY or Refresh_PUB_KEY) as arguments to the passportStrategy function.
+   *It passes the passport instance, the usageName string (either "jwt-access","jwt-access-admin" or "jwt-refresh","jwt-refresh-admin"), and the corresponding public key (either ACCESS_PUB_KEY, ADMIN_ACCESS_PUBLIC_KEY or Refresh_PUB_KEY,ADMIN_REFRESH_PUBLIC_KEY) as arguments to the passportStrategy function.
    *If an error occurs while registering the strategy, it is logged to the console.
    */
   try {
@@ -163,8 +163,7 @@ const passportConfig = (passport: PassportStatic) => {
   });
 
   /**
-   * Deserialize the user object from the session.
-   * @function
+   * @method passport.deserializeUser - Deserialize the user object from the session.
    * @param {unknown} user - The serialized user object.
    * @param {Function} done - The callback function to be called when deserialization is completed.
    */

@@ -48,11 +48,11 @@ const CheckTwoFactorAuth: RouteParamsHandler = async (req, res, next) => {
     const user = await User.findOne({ email: req.body.email });
 
     // check if user exist in database
-    if (!user) return next(new Error("User not found"));
+    if (!user) return next(CustomErrorHandler.notFound("User not found"));
 
     // Is user verified
     if (!user.verified)
-      return next(CustomErrorHandler.unAuthorized("User is not verified"));
+      return next(CustomErrorHandler.nonVerified("Please verify user email to login"));
 
     const IsPasswordValid = await CheckPasswordValidity(
       user.id,
@@ -74,7 +74,7 @@ const CheckTwoFactorAuth: RouteParamsHandler = async (req, res, next) => {
       const newOTP = new OTP({
         userId: user._id,
         OTP: OTPvalue,
-        expiresIn:moment().add(15, 'minutes').format('YYYY-MM-DD HH:mm:ss')
+        expiresIn: moment().add(15, "minutes").format("YYYY-MM-DD HH:mm:ss"),
       });
 
       // get user id and email
@@ -93,7 +93,7 @@ const CheckTwoFactorAuth: RouteParamsHandler = async (req, res, next) => {
       }
 
       // save one time password
-      await newOTP.save(); 
+      await newOTP.save();
 
       // send response to client
       res.status(200).json({

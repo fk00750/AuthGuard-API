@@ -1,12 +1,6 @@
-# AuthGuard--API
+# AuthGuard Authentication API
+!['AuthGuard'](./AuthGuard-removebg-preview.png)
 
-## Two Factor Auth
+## 👋 Introduction
 
-[] user logs in, check if user enabled 2fa.
-
-[] if user does not opt for 2fa go to next follow simple login process.
-
-[] if user enabled 2fa, send a one time password to their email.
-
-[] on a seperate route verify otp and logs in user
-
+My authentication API provides a strong and secure solution to your authentication needs for web applications. The API is designed with Node.js and TypeScript, and utilizes MongoDB with Mongoose as its data storage engine. It provides user registration, login/logout, email verification, password management, two-factor authentication, and admin functions. Advanced security measures protect user data with refresh token rotation and peppered password hashing. A simple and scalable authentication API. This API delivers a reliable, scalable solution for web applications.
