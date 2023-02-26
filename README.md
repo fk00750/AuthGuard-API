@@ -1,5 +1,5 @@
 # AuthGuard Authentication API
-!['AuthGuard'](./AuthGuard-removebg-preview.png)
+<img src="./public/README_img.png">
 
 ## 👋 Introduction
 
