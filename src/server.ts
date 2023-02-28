@@ -1,11 +1,11 @@
 /**
  * @file server.js
- * @fileoverview - The server.js file is the main implementation of the server logic for an application. 
- * It sets up the environment variables from the .env file, imports the main application module from ./app, and 
- * the custom error handler from ./utils/CustomError.Handler. 
- * It also connects to the database using the Connect__Database function. 
- * The server listens to the specified port, which is either defined in the environment variables 
- * or set to 5000 as a default. If there is an error starting the server, the custom error handler will catch the exception and log the error message.
+ * @fileoverview - <ul><li>The server.js file is the main implementation of the server logic for an application.</li>
+ * <li>It sets up the environment variables from the .env file, imports the main application module from ./app, and
+ * the custom error handler from ./utils/CustomError.Handler.</li>
+ * <li>It also connects to the database using the Connect__Database function. </li>
+ * <li>The server listens to the specified port, which is either defined in the environment variables
+ * or set to 5000 as a default.</li><li>If there is an error starting the server, the custom error handler will catch the exception and log the error message.</li></ul>
  * @author Faiz Ali Khan
  */
 
@@ -24,7 +24,7 @@ const PORT: any = process.env.PORT || 5000;
  */
 async function startServer() {
   try {
-     // Start the server and connects to server
+    // Start the server and connects to server
     app.listen(PORT, async () => {
       await Connect__Database(PORT);
     });

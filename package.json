@@ -4,7 +4,6 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "docs": "jsdoc -c jsdoc.conf.json",
     "dev": "tsc && node dist/server.js",
     "start": "node dist/server.js",
     "server": "nodemon ./src/server.ts",
@@ -25,7 +24,6 @@
     "googleapis": "^110.0.0",
     "helmet": "^6.0.1",
     "joi": "^17.7.0",
-    "jsdoc": "^4.0.0",
     "moment": "^2.29.4",
     "mongoose": "^6.8.3",
     "morgan": "^1.10.0",

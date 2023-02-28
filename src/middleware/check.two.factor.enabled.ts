@@ -17,11 +17,13 @@ import moment from "moment";
  * @param {NextFunction} next - Express next middleware function
  *
  * @throws Will throw an error if any of the following occurs:
- * - Login credentials (email and password) validation fails
- * - User with the provided email is not found in the database
- * - User's account is not verified
- * - OTP is already available for the user
- * - An error occurs while generating or sending OTP
+ * <ul>
+ * <li> Login credentials (email and password) validation fails</li>
+ * <li> User with the provided email is not found in the database</li>
+ * <li> User's account is not verified</li>
+ * <li> OTP is already available for the user</li>
+ * <li> An error occurs while generating or sending OTP</li>
+ * </ul>
  *
  * @returns {void} Sends a JSON response indicating the two-factor authentication status and OTP
  *

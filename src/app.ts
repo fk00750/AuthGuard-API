@@ -1,9 +1,9 @@
 /**
  * @file app.js
- * @fileoverview - The app.js file in an Express application is responsible for setting up various middlewares, routes, and configurations needed to run the application. 
- * It imports necessary modules, initializes passport configuration, manages user sessions, logs HTTP requests, implements security measures, parses JSON and urlencoded bodies, 
- * defines routes for authentication and user management, provides a home route, and handles errors. The file acts as the central point of control for 
- * the Express application and provides a convenient way to manage all the necessary components of the application in one place.
+ * @fileoverview - <ul><li>The app.js file in an Express application is responsible for setting up various middlewares, routes, and configurations needed to run the application.</li>
+ * <li>It imports necessary modules, initializes passport configuration, manages user sessions, logs HTTP requests, implements security measures, parses JSON and urlencoded bodies,
+ * defines routes for authentication and user management, provides a home route, and handles errors.</li><li> The file acts as the central point of control for
+ * the Express application and provides a convenient way to manage all the necessary components of the application in one place.</li></ul>
  * @author Faiz Ali Khan
  */
 
@@ -103,7 +103,7 @@ app.use("/admin", authLimiter, UserManagementRouterByAdmin);
 app.use("/admin", authLimiter, UserManagementRouterByAdmin);
 
 // Home route
-app.get("/",authLimiter, (req: Request, res: Response, next: NextFunction) => {
+app.get("/", authLimiter, (req: Request, res: Response, next: NextFunction) => {
   res.status(200).json({ message: "Welcome to AuthGuard API" });
 });
 

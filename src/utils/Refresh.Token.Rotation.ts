@@ -8,15 +8,14 @@ enum ROLE {
 }
 
 /**
- * @class RefreshTokenCycle
- * @description RefreshTokenCycle is a class that provides a method to refresh the access and refresh tokens.
+ * @class RefreshTokenRotation
+ * @classdesc RefreshTokenRotation is a class that provides a method to refresh the access and refresh tokens.
  */
-export class RefreshTokenCycle {
+export class RefreshTokenRotation {
   /**
-   * @description This method refreshes the access and refresh tokens.
-   *
    * @static
    * @async
+   * @description This method refreshes the access and refresh tokens.
    * @param {string} token - The refresh token that needs to be refreshed.
    * @param {any} user - The user object that includes the user ID.
    * @returns {Promise<{accessToken: string, refreshToken: string}>} - Returns the new access and refresh tokens.

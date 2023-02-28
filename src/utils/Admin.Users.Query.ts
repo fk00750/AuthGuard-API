@@ -1,7 +1,7 @@
 /**
  * @class UserQuery
  * @description - UserQuery is a class that helps with creating MongoDB queries for filtering, sorting and limiting user data
- * @summary - The UserQuery class is a class that helps with creating MongoDB queries for filtering, sorting and limiting user data. It has private properties query, sort and limit, which represent the MongoDB query object, sorting object and limit on the number of results, respectively. It also has private properties username and email, which are used for filtering the results of a User database query. The class has a constructor that accepts a reqQuery object and sets the values for the query, sort, limit, username, and email properties based on the values in the reqQuery object. The class has three public methods, getQuery, getSort, and getLimit, which return the query, sort, and limit properties, respectively.
+ * @summary <ul><li>The UserQuery class is a class that helps with creating MongoDB queries for filtering, sorting and limiting user data.</li><li>It has private properties query, sort and limit, which represent the MongoDB query object, sorting object and limit on the number of results, respectively.</li><li> It also has private properties username and email, which are used for filtering the results of a User database query.</li><li> The class has a constructor that accepts a reqQuery object and sets the values for the query, sort, limit, username, and email properties based on the values in the reqQuery object.</li><li> The class has three public methods, getQuery, getSort, and getLimit, which return the query, sort, and limit properties, respectively.</li></ul>
  *
  * @property {Object} query - The MongoDB query object that represents the filter criteria.
  * @property {Object} sort - The MongoDB sort object that represents the sorting criteria.
@@ -77,12 +77,12 @@ class UserQuery {
         break;
     }
 
-    /** This code is updating the query object to include filters for username and email if either of 
-     *  them is specified in the reqQuery passed to the constructor. The spread operator (...) is used 
-     *  to combine the existing query object with the new filters, ensuring that any existing filters are not lost. 
-     *  The ...(this.username ? { username: this.username } : {}) syntax uses a ternary operator to only add the username filter 
-     *  if this.username is truthy. The same logic applies to the email filter.
-     *  This new query object will be used to filter the results of a User database query. */
+    // This code is updating the query object to include filters for username and email if either of
+    // them is specified in the reqQuery passed to the constructor. The spread operator (...) is used
+    // to combine the existing query object with the new filters, ensuring that any existing filters are not lost.
+    // The ...(this.username ? { username: this.username } : {}) syntax uses a ternary operator to only add the username filter
+    // if this.username is truthy. The same logic applies to the email filter.
+    // This new query object will be used to filter the results of a User database query.
     this.query = {
       ...this.query,
       ...(this.username ? { username: this.username } : {}),
@@ -91,10 +91,7 @@ class UserQuery {
   }
 
   /**
-   * Gets the query object used for filtering the results of a User database query.
-   *
-   * @public
-   * @method getQuery
+   * @description Gets the query object used for filtering the results of a User database query.
    * @returns {Object} The query object used for filtering the results of a User database query.
    */
   getQuery(): any {
@@ -102,10 +99,7 @@ class UserQuery {
   }
 
   /**
-   * Gets the sort object used for sorting the results of a User database query.
-   *
-   * @public
-   * @method getSort
+   * @description Gets the sort object used for sorting the results of a User database query.
    * @returns {Object} - The sort object used for sorting the results of a User database query.
    */
   getSort(): any {
@@ -113,10 +107,7 @@ class UserQuery {
   }
 
   /**
-   * Gets the limit number used for limiting the number of results of a User database query.
-   *
-   * @public
-   * @method getLimit
+   * @description Gets the limit number used for limiting the number of results of a User database query.
    * @returns {number} - The limit number used for limiting the number of results of a User database query.
    */
   getLimit(): number {

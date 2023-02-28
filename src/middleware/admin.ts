@@ -3,6 +3,7 @@ import User from "../models/user.Model";
 import RouteParamsHandler from "../types/RouteParams.type";
 import CustomErrorHandler from "../utils/CustomError.Handler";
 
+
 const admin: RouteParamsHandler = async (req, res, next) => {
   try {
     // find the user in database

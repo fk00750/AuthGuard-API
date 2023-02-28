@@ -42,17 +42,25 @@ const ADMIN_REFRESH_PRIVATE_KEY: string = readFileSync(
 class IssueAccessAndRefreshToken {
   /**
    *@static
-   *@property {string} ACCESS_PRIV_KEY - ACCESS_PRIV_KEY property - private key for access token
+   *@property {string} ACCESS_PRIV_KEY - private key for access token
    */
   static ACCESS_PRIV_KEY = ACCESS_PRIV_KEY;
   /**
    *@static
-   *@property {string} REFRESH_PRIV_KEY - REFRESH_PRIV_KEY property - private key for refresh token
+   *@property {string} REFRESH_PRIV_KEY - private key for refresh token
    */
   static REFRESH_PRIV_KEY = REFRESH_PRIV_KEY;
 
-  // Admin
+  /**
+   *@static
+   *@property {string} ADMIN_ACCESS_PRIV_KEY - private key for admin access token
+   */
   static ADMIN_ACCESS_PRIV_KEY = ADMIN_ACCESS_PRIVATE_KEY;
+
+  /**
+   *@static
+   *@property {string} ADMIN_REFRESH_PRIV_KEY - private key for admin refresh token
+   */
   static ADMIN_REFRESH_PRIV_KEY = ADMIN_REFRESH_PRIVATE_KEY;
 
   /**
@@ -79,7 +87,7 @@ class IssueAccessAndRefreshToken {
   /**
    *@static
    *@async
-   *@method issueAccessToken - issueAccessToken method - method to generate access token
+   *@description issue new Access Token with expiration of 50s.
    *@param {Types.ObjectId} userId - user id for payload
    *@returns {string} - signed access token
    */
@@ -90,7 +98,7 @@ class IssueAccessAndRefreshToken {
   /**
    *@static
    *@async
-   *@method issueRefreshToken - issueRefreshToken method - method to generate refresh token
+   *@description issue new refresh token with expiration of 1 year.
    *@param {Types.ObjectId} userId - user id for payload
    *@returns {string} - signed refresh token
    */
@@ -98,11 +106,24 @@ class IssueAccessAndRefreshToken {
     return this.issueToken(userId, this.REFRESH_PRIV_KEY, "1y");
   }
 
-  // Admin
+  /**
+   *@static
+   *@async
+   *@description issue new access token for admin with expiration of 50s.
+   *@param {Types.ObjectId} userId - admin user id of payload
+   *@returns {string} - signed admin access token
+   */
   static async issueAdminAccessToken(userId: Types.ObjectId) {
     return this.issueToken(userId, this.ADMIN_ACCESS_PRIV_KEY, "50s");
   }
 
+  /**
+   *@static
+   *@async
+   *@description issue new refresh token for admin with expiration of 1 year.
+   *@param {Types.ObjectId} userId - admin user id of payload
+   *@returns {string} - signed admin refresh token
+   */
   static async issueAdminRefreshToken(userId: Types.ObjectId) {
     return this.issueToken(userId, this.ADMIN_REFRESH_PRIV_KEY, "1y");
   }
